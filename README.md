@@ -58,22 +58,22 @@ Task.create({
 
 ## Configuration & Details
 
-The package includes lots of useful cron methods and configuration options. Let's start with the main `Cron` class. We can configure its functionality by passing a configuration options as the third parameter.
+The package includes lots of useful cron methods and configuration options. Let's start with the main `Cron` class. We can configure its functionality by passing configuration options as the third parameter.
 
 ```js
 let cron = new Cron(model, handler, {
-  // When there are no to process, wait 30s before checking
-  // for processable jobs again (default: 0).
+  // When there are no jobs to process, wait 30s before
+  // checking for processable jobs again (default: 0).
   idleDelay: 30000,
   // Wait 60s before processing the same job again in case
-  // the job is a recurring job.
+  // the job is a recurring job (default: 0).
   nextDelay: 60000
 });
 ```
 
-We can create **recurring** or **one-time** jobs. Every time a job processing starts the `startedAt` field is set to the current date and the `state` field is set to `1`. When a job processing ends the `processedAt` field is set to the current date and the `state` is to `0` (recurring) or `2` (expired).
+We can create **recurring** or **one-time** jobs. Every time a job processing starts the `startedAt` field is updated to the current date and the `state` field is set to `1`. When a job processing ends the `processedAt` field is updated to the current date and the `state` is set to `0` (recurring) or `2` (expired).
 
-By creating a document with default cron plugin values we create a one-time job which will start processing immediately.
+By creating a document with the default plugin values we create a one-time job which starts processing immediately.
 
 ```js
 model.create({});
@@ -95,7 +95,7 @@ model.create({
 });
 ```
 
-A recurring job will repeat endlessly. We can limit that by setting the `stopAt` field. When a job expires it stops repeating and the `state` field is set to `2`. In case we also set `removeExpired` field to `true`, a job will is automatically deleted.
+A recurring job will repeat endlessly. We can limit that by setting the `stopAt` field. When a job expires it stops repeating and the `state` field is set to `2`. If we also set `removeExpired` field to `true`, a job is automatically deleted.
 
 ```js
 model.create({
@@ -106,8 +106,7 @@ model.create({
 });
 ```
 
-Sometimes we'll need to stop a job without touching its configuration fields. Set the `state` field to `-1` if you need to disable a job, set it back to `0` when you need to re-enable it.
-
+Sometimes we'll need to stop a job without touching its configuration fields. Set the `state` field to `-1` if you need to disable a job and set it back to `0` when you need to re-enable it.
 
 ## Example
 
