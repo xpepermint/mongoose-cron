@@ -1,2 +1,3 @@
-module.exports.Cron = require('./lib/cron').Cron;
-module.exports.cronPlugin = require('./lib/schema').cronPlugin;
+'use strict';
+
+module.exports.cronPlugin = require('./lib/plugin');

@@ -19,31 +19,25 @@ Let's say we have a simple application like the one below.
 ```js
 import mongoose from 'mongoose';
 mongoose.Promise = Promise;
+
 let db = mongoose.connect('mongodb://localhost:27017/testdb');
 let schema = new mongoose.Schema({name: String});
 let Task = db.model('Task', schema);
 ```
 
-To convert the Task model into a crontab collection, attach the schema plugin.
+To convert the Task model into a crontab collection, attach the plugin, create a cron worker instance, then call the `start` method on it to start processing.
 
 ```js
 import {cronPlugin} from 'mongoose-cron';
 
 let schema = new mongoose.Schema({name: String});
-schema.plugin(cronPlugin);
-let Task = db.model('Task', schema);
-```
-
-Then create a schedule and start processing.
-
-```js
-import {Cron} from 'mongoose-cron';
-
-let cron = new Cron(Task, task => {
-  console.log('processing task', task);
-  return Promise.resolve().catch(console.log);
+schema.plugin(cronPlugin, {
+  handler: doc => console.log('processing', doc)
 });
-cron.start();
+
+let Task = db.model('Task', schema);
+let cron = Task.createCron();
+cron.start(); // call `cron.stop()` to stop processing
 ```
 
 We can now create our first job.
@@ -52,26 +46,28 @@ We can now create our first job.
 Task.create({
   startAt: new Date('2015-12-12T09:00:00.010Z'),
   stopAt: new Date('2016-12-12T09:00:00.010Z'),
-  schedule: '* * * * * *' // every second
+  schedule: '* * * * * *' // run every second
 });
 ```
 
 ## Configuration & Details
 
-The package includes lots of useful cron methods and configuration options. Let's start with the main `Cron` class. We can configure its functionality by passing configuration options as the third parameter.
+The package includes several of useful cron methods and configuration options. We can configure cron functionality by passing the `config` variable with options to the plugin or by passing options directly to the `Task.createCron` method.
 
 ```js
-let cron = new Cron(model, handler, {
-  // When there are no jobs to process, wait 30s before
-  // checking for processable jobs again (default: 0).
-  idleDelay: 30000,
-  // Wait 60s before processing the same job again in case
-  // the job is a recurring job (default: 0).
-  nextDelay: 60000
+schema.plugin(cronPlugin, {
+  config: {
+    // When there are no jobs to process, wait 30s before
+    // checking for processable jobs again (default: 0).
+    idleDelay: 30000,
+    // Wait 60s before processing the same job again in case
+    // the job is a recurring job (default: 0).
+    nextDelay: 60000
+  }
 });
 ```
 
-We can create **recurring** or **one-time** jobs. Every time a job processing starts the `startedAt` field is updated to the current date and the `state` field is set to `1`. When a job processing ends the `processedAt` field is updated to the current date and the `state` is set to `0` (recurring) or `2` (expired).
+We can create **recurring** or **one-time** jobs. Every time the job processing starts the `startedAt` field is replaced with the current date and the `state` field is set to `1`. When the processing ends the `processedAt` field is updated to the current date and the `state` is set to `0` (recurring) or `2` (expired).
 
 By creating a document with the default plugin values we create a one-time job which starts processing immediately.
 
