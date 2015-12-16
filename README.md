@@ -52,18 +52,17 @@ Task.create({
 
 ## Configuration & Details
 
-The package includes several of useful cron methods and configuration options. We can configure cron functionality by passing the `config` variable with options to the plugin or by passing options directly to the `Task.createCron` method.
+The package includes several useful cron methods and configuration options. We can configure cron functionality by passing the additional options to the plugin or by passing them directly to the `Task.createCron` method.
 
 ```js
 schema.plugin(cronPlugin, {
-  config: {
-    // When there are no jobs to process, wait 30s before
-    // checking for processable jobs again (default: 0).
-    idleDelay: 30000,
-    // Wait 60s before processing the same job again in case
-    // the job is a recurring job (default: 0).
-    nextDelay: 60000
-  }
+  ...
+  // When there are no jobs to process, wait 30s before
+  // checking for processable jobs again (default: 0).
+  idleDelay: 30000,
+  // Wait 60s before processing the same job again in case
+  // the job is a recurring job (default: 0).
+  nextDelay: 60000
 });
 ```
 
