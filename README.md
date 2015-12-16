@@ -44,15 +44,17 @@ We can now create our first job.
 
 ```js
 Task.create({
-  startAt: new Date('2015-12-12T09:00:00.010Z'),
-  stopAt: new Date('2016-12-12T09:00:00.010Z'),
-  schedule: '* * * * * *' // run every second
+  cron: {
+    startAt: new Date('2015-12-12T09:00:00.010Z'),
+    stopAt: new Date('2016-12-12T09:00:00.010Z'),
+    interval: '* * * * * *' // run every second
+  }
 });
 ```
 
 ## Configuration & Details
 
-The package includes several useful cron methods and configuration options. We can configure cron functionality by passing the additional options to the plugin or by passing them directly to the `Task.createCron` method.
+The package includes several useful methods and configuration options. We can configure cron functionality by passing the additional options to the plugin or by passing them directly to the `Task.createCron` method.
 
 ```js
 schema.plugin(cronPlugin, {
@@ -66,7 +68,7 @@ schema.plugin(cronPlugin, {
 });
 ```
 
-We can create **recurring** or **one-time** jobs. Every time the job processing starts the `startedAt` field is replaced with the current date and the `state` field is set to `1`. When the processing ends the `processedAt` field is updated to the current date and the `state` is set to `0` (recurring) or `2` (expired).
+We can create **recurring** or **one-time** jobs. Every time the job processing starts the `cron.startedAt` field is replaced with the current date and the `cron.state` field is set to `1`. When the processing ends the `cron.processedAt` field is updated to the current date and the `cron.state` is set to `0` (recurring) or `2` (expired).
 
 By creating a document with the default plugin values we create a one-time job which starts processing immediately.
 
@@ -74,34 +76,40 @@ By creating a document with the default plugin values we create a one-time job w
 model.create({});
 ```
 
-Job execution can be delayed by setting the `startAt` field.
+Job execution can be delayed by setting the `cron.startAt` field.
 
 ```js
 model.create({
-  startAt: new Date('2016-01-01')
+  cron: {
+    startAt: new Date('2016-01-01')
+  }
 });
 ```
 
-By setting the `schedule` field we define a recurring job.
+By setting the `cron.interval` field we define a recurring job.
 
 ```js
 model.create({
-  schedule: '* * * * * *' // every second
+  cron: {
+    interval: '* * * * * *' // every second
+  }
 });
 ```
 
-A recurring job will repeat endlessly. We can limit that by setting the `stopAt` field. When a job expires it stops repeating and the `state` field is set to `2`. If we also set `removeExpired` field to `true`, a job is automatically deleted.
+A recurring job will repeat endlessly. We can limit that by setting the `cron.stopAt` field. When a job expires it stops repeating and the `cron.state` field is set to `2`. If we also set `cron.removeExpired` field to `true`, a job is automatically deleted.
 
 ```js
 model.create({
-  startAt: new Date('2016-01-01'),
-  schedule: '* * * * * *',
-  stopAt: new Date('2020-01-01'),
-  removeExpired: true
+  cron: {
+    startAt: new Date('2016-01-01'),
+    interval: '* * * * * *',
+    stopAt: new Date('2020-01-01'),
+    removeExpired: true
+  }
 });
 ```
 
-Sometimes we'll need to stop a job without touching its configuration fields. Set the `state` field to `-1` if you need to disable a job and set it back to `0` when you need to re-enable it.
+Sometimes we'll need to stop a job without touching its configuration fields. Set the `cron.state` field to `-1` if you need to disable a job and set it back to `0` when you need to re-enable it.
 
 ## Example
 
