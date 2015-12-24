@@ -2,7 +2,7 @@
 
 > MongoDB collection as crontab
 
-MongooseCron offers a simple API for scheduling tasks and running recurring jobs on one or multiple database collections. The package is build on top of [MongoDB](https://www.mongodb.org) and [Mongoose](http://mongoosejs.com). It's fast and it uses atomic commands to ensure safe job execution in cluster environments.
+MongooseCron is build on top of [MongoDB](https://www.mongodb.org) and [Mongoose](http://mongoosejs.com). It offers a simple API for scheduling tasks and running recurring jobs on one or multiple database collections, supporting models and discriminators. It's fast, minimizes processing overhead and it uses atomic commands to ensure safe job executions in cluster environments.
 
 <img src="giphy.gif" />
 
@@ -36,8 +36,7 @@ schema.plugin(cronPlugin, {
 });
 
 let Task = db.model('Task', schema);
-let cron = Task.createCron();
-cron.start(); // call `cron.stop()` to stop processing
+let cron = Task.createCron().start(); // call `cron.stop()` to stop processing
 ```
 
 We can now create our first job.
@@ -45,12 +44,15 @@ We can now create our first job.
 ```js
 Task.create({
   cron: {
-    startAt: new Date('2015-12-12T09:00:00.010Z'),
-    stopAt: new Date('2016-12-12T09:00:00.010Z'),
+    state: 0,
+    startAt: new Date('2015-12-12'),
+    stopAt: new Date('2016-12-12'),
     interval: '* * * * * *' // run every second
   }
 });
 ```
+
+**IMPORTANT:** Any document in the `tasks` collection above can become a cron job. We just have to set at least the `cron.state` field. If that field is not present then the document is ignored by the cron heartbeat.
 
 ## Configuration & Details
 
@@ -70,10 +72,14 @@ schema.plugin(cronPlugin, {
 
 We can create **recurring** or **one-time** jobs. Every time the job processing starts the `cron.startedAt` field is replaced with the current date and the `cron.state` field is set to `1`. When the processing ends the `cron.processedAt` field is updated to the current date and the `cron.state` is set to `0` (recurring) or `2` (expired).
 
-By creating a document with the default plugin values we create a one-time job which starts processing immediately.
+We can create a one-time job which will start processing immediately just by setting the `cron.state` field to `0` (which stands for the `pending` state). Note that this is the required field.
 
 ```js
-model.create({});
+model.create({
+  cron: {
+    state: 0
+  }
+});
 ```
 
 Job execution can be delayed by setting the `cron.startAt` field.
@@ -81,6 +87,7 @@ Job execution can be delayed by setting the `cron.startAt` field.
 ```js
 model.create({
   cron: {
+    ...
     startAt: new Date('2016-01-01')
   }
 });
@@ -91,16 +98,32 @@ By setting the `cron.interval` field we define a recurring job.
 ```js
 model.create({
   cron: {
+    ...
     interval: '* * * * * *' // every second
   }
 });
 ```
 
-A recurring job will repeat endlessly. We can limit that by setting the `cron.stopAt` field. When a job expires it stops repeating and the `cron.state` field is set to `2`. If we also set `cron.removeExpired` field to `true`, a job is automatically deleted.
+The interval above consists of 6 values.
+
+```
+*    *    *    *    *    *
+┬    ┬    ┬    ┬    ┬    ┬
+│    │    │    │    │    |
+│    │    │    │    │    └ day of week (0 - 7) (0 or 7 is Sun)
+│    │    │    │    └───── month (1 - 12)
+│    │    │    └────────── day of month (1 - 31)
+│    │    └─────────────── hour (0 - 23)
+│    └──────────────────── minute (0 - 59)
+└───────────────────────── second (0 - 59)
+```
+
+A recurring job will repeat endlessly unless we limit that by setting the `cron.stopAt` field. When a job expires it stops repeating and the `cron.state` field is set to `2`. If we also set `cron.removeExpired` field to `true`, a job is automatically deleted.
 
 ```js
 model.create({
   cron: {
+    state: 0,
     startAt: new Date('2016-01-01'),
     interval: '* * * * * *',
     stopAt: new Date('2020-01-01'),

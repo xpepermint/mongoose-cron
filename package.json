@@ -1,10 +1,10 @@
 {
   "name": "mongoose-cron",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "MongoDB collection as crontab",
   "main": "index.js",
   "scripts": {
-    "example": "node example/index.js",
+    "example": "node --harmony --harmony-destructuring example/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
