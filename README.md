@@ -44,7 +44,7 @@ We can now create our first job.
 ```js
 Task.create({
   cron: {
-    state: 0,
+    enabled: true,
     startAt: new Date('2015-12-12'),
     stopAt: new Date('2016-12-12'),
     interval: '* * * * * *' // run every second
@@ -52,7 +52,7 @@ Task.create({
 });
 ```
 
-**IMPORTANT:** Any document in the `tasks` collection above can become a cron job. We just have to set at least the `cron.state` field. If that field is not present then the document is ignored by the cron heartbeat.
+**IMPORTANT:** Any document in the `tasks` collection above can become a cron job. We just have to set at least the `cron.enabled` field to `true`.
 
 ## Configuration & Details
 
@@ -70,14 +70,14 @@ schema.plugin(cronPlugin, {
 });
 ```
 
-We can create **recurring** or **one-time** jobs. Every time the job processing starts the `cron.startedAt` field is replaced with the current date and the `cron.state` field is set to `1`. When the processing ends the `cron.processedAt` field is updated to the current date and the `cron.state` is set to `0` (recurring) or `2` (expired).
+We can create **recurring** or **one-time** jobs. Every time the job processing starts the `cron.startedAt` field is replaced with the current date and the `cron.state` field is set to `1`. When the processing ends the `cron.processedAt` field is updated to the current date and the `cron.state` field is removed (recurring) or set to `2` (expired).
 
-We can create a one-time job which will start processing immediately just by setting the `cron.state` field to `0` (which stands for the `pending` state). Note that this is the required field.
+We can create a one-time job which will start processing immediately just by setting the `cron.enabled` field to `true`.
 
 ```js
 model.create({
   cron: {
-    state: 0
+    enabled: true
   }
 });
 ```
@@ -123,7 +123,7 @@ A recurring job will repeat endlessly unless we limit that by setting the `cron.
 ```js
 model.create({
   cron: {
-    state: 0,
+    enabled: true,
     startAt: new Date('2016-01-01'),
     interval: '* * * * * *',
     stopAt: new Date('2020-01-01'),
@@ -131,8 +131,6 @@ model.create({
   }
 });
 ```
-
-Sometimes we'll need to stop a job without touching its configuration fields. Set the `cron.state` field to `-1` if you need to disable a job and set it back to `0` when you need to re-enable it.
 
 ## Example
 

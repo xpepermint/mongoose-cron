@@ -43,7 +43,7 @@ Reminder.findOneAndUpdate({_id: '565781bba17d0e685f8e2087'}, {
   name: 'Job 2',
   description: 'remined me every 1s',
   cron: {
-    state: 0,
+    enabled: true,
     startAt: new Date(),
     interval: '* * * * * *'
   }
