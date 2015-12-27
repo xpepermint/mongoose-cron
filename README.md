@@ -70,7 +70,7 @@ schema.plugin(cronPlugin, {
 });
 ```
 
-We can create **recurring** or **one-time** jobs. Every time the job processing starts the `cron.startedAt` field is replaced with the current date and the `cron.state` field is set to `1`. When the processing ends the `cron.processedAt` field is updated to the current date and the `cron.state` field is removed (recurring) or set to `2` (expired).
+We can create **recurring** or **one-time** jobs. Every time the job processing starts the `cron.startedAt` field is replaced with the current date and the `cron.locked` field is set to `true`. When the processing ends the `cron.processedAt` field is updated to the current date and the `cron.locked` field is removed.
 
 We can create a one-time job which will start processing immediately just by setting the `cron.enabled` field to `true`.
 
@@ -118,7 +118,7 @@ The interval above consists of 6 values.
 └───────────────────────── second (0 - 59)
 ```
 
-A recurring job will repeat endlessly unless we limit that by setting the `cron.stopAt` field. When a job expires it stops repeating and the `cron.state` field is set to `2`. If we also set `cron.removeExpired` field to `true`, a job is automatically deleted.
+A recurring job will repeat endlessly unless we limit that by setting the `cron.stopAt` field. When a job expires it stops repeating. If we also set `cron.removeExpired` field to `true`, a job is automatically deleted.
 
 ```js
 model.create({

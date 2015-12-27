@@ -21,7 +21,7 @@ let reminderSchema = new mongoose.Schema({
 });
 
 noteSchema.plugin(cronPlugin, {
-  handler: doc => console.log('processing', doc)
+  handler: doc => console.log('processing', doc.id)
 });
 
 let Note = db.model('Note', noteSchema);
