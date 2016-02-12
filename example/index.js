@@ -2,9 +2,12 @@
 
 /* initializing mongodb */
 
+let dbhost = process.env.DB_HOST || 'localhost:27017';
+let dbname = process.env.DB_NAME || 'testdb';
+
 const mongoose = require('mongoose');
 mongoose.Promise = Promise;
-let db = mongoose.connect('mongodb://localhost:27017/testdb');
+let db = mongoose.connect('mongodb://' + dbhost + '/' + dbname);
 
 /* defining polymorphic model with support for cron */
 
@@ -24,7 +27,7 @@ noteSchema.plugin(cronPlugin, {
   handler: doc => console.log('processing', doc.id)
 });
 
-let Note = db.model('Note', noteSchema);
+let Note = mongoose.model('Note', noteSchema);
 let Checklist = Note.discriminator('Checklist', checklistSchema);
 let Reminder = Note.discriminator('Reminder', reminderSchema);
 
