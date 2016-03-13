@@ -18,7 +18,6 @@ Let's say we have a simple application like the one below.
 
 ```js
 import mongoose from 'mongoose';
-mongoose.Promise = Promise;
 
 let db = mongoose.connect('mongodb://localhost:27017/testdb');
 let schema = new mongoose.Schema({name: String});
@@ -32,7 +31,7 @@ import {cronPlugin} from 'mongoose-cron';
 
 let schema = new mongoose.Schema({name: String});
 schema.plugin(cronPlugin, {
-  handler: doc => console.log('processing', doc)
+  handler: doc => console.log('processing', doc) // function or promise
 });
 
 let Task = db.model('Task', schema);

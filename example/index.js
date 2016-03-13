@@ -3,8 +3,9 @@
 /* initializing mongodb */
 
 const mongoose = require('mongoose');
-mongoose.Promise = Promise;
-let db = mongoose.connect('mongodb://localhost:27017/testdb');
+const dbhost = process.env.DB_HOST || 'localhost:27017';
+const dbname = process.env.DB_NAME || 'testdb';
+const db = mongoose.connect(`mongodb://${dbhost}/${dbname}`);
 
 /* defining polymorphic model with support for cron */
 
