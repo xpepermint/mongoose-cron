@@ -33,10 +33,10 @@
   },
   "homepage": "https://github.com/xpepermint/mongoose-cron#readme",
   "devDependencies": {
-    "mongoose": "^4.3.1"
   },
   "dependencies": {
     "later": "^1.2.0",
-    "moment": "^2.10.6"
+    "moment": "^2.10.6",
+    "mongoose": "^4.3.1"
   }
 }
