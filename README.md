@@ -65,7 +65,11 @@ schema.plugin(cronPlugin, {
   idleDelay: 30000,
   // Wait 60s before processing the same job again in case
   // the job is a recurring job (default: 0).
-  nextDelay: 60000
+  nextDelay: 60000,
+  // Object or Array of Objects to add to the find query.
+  // The value is concatinated with the $and operator.
+  // (default: [])
+  addToQuery: { version: { $lte: 1 } }
 });
 ```
 
