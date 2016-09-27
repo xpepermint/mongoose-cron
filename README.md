@@ -138,3 +138,7 @@ model.create({
 ## Example
 
 You can run the attached example with the `npm run example` command.
+
+## Alternatives
+
+There is a very similar package called [mongodb-cron](https://github.com/xpepermint/mongodb-cron), which uses the [officially supported Node.js driver](https://docs.mongodb.com/ecosystem/drivers/node-js/) for MongoDB.
