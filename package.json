@@ -4,7 +4,7 @@
   "description": "MongoDB collection as crontab",
   "main": "index.js",
   "scripts": {
-    "example": "cd example && npm install && node index.js",
+    "example": "npm install && cd example && npm install && node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
