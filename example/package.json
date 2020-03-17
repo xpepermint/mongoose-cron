@@ -1,10 +1,10 @@
 {
-  "name": "mongoose-cron",
-  "version": "0.5.7",
-  "description": "MongoDB collection as crontab",
+  "name": "mongoose-cron-example",
+  "version": "0.0.1",
+  "description": "Example of using mongoose-cron",
   "main": "index.js",
   "scripts": {
-    "example": "npm install && cd example && npm install && node index.js",
+    "start": "node --harmony --harmony-destructuring index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -35,6 +35,7 @@
   "devDependencies": {},
   "dependencies": {
     "later": "^1.2.0",
-    "moment": "^2.15.1"
+    "moment": "^2.15.1",
+    "mongoose": "^5.9.5"
   }
 }
