@@ -31,9 +31,18 @@ let Task = db.model('Task', schema);
 To convert the Task model into a crontab collection, attach the plugin, create a cron worker instance, then call the `start` method on it to start processing.
 
 ```js
-import {cronPlugin} from 'mongoose-cron';
+import mongoose from 'mongoose';
+import MongooseCronFactory from 'mongoose-cron';
+const cronPlugin = MongooseCronFactory(mongoose);
+/**
+ * In alternative of the import and the definition of cronPlugin variable,
+ * you can use this compact one-line solution:
+ *
+ *  const cronPlugin = require('mongoose-cron')(mongoose);
+ **/
 
 let schema = new mongoose.Schema({name: String});
+
 schema.plugin(cronPlugin, {
   handler: doc => console.log('processing', doc) // function or promise
 });

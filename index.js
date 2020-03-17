@@ -1,3 +1,3 @@
 'use strict';
 
-module.exports.cronPlugin = require('./lib/plugin');
+module.exports = require('./lib/plugin');
